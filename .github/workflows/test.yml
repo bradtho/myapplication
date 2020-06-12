@@ -2,6 +2,26 @@ name: Build and Test
 on: [push, pull_request]
 
 jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      id: go
+      with:
+        go-version: 1.13
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+
+    - name: Get Build Version
+      id: version
+      run: echo ::set-output name=VERSION::${GITHUB_REF#refs/heads/}
+
+    - name: Build the Docker image
+      run: make build-image
+
   test-security:
     runs-on: ubuntu-latest
     env:
