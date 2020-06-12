@@ -8,7 +8,7 @@ env:
   IMAGE_NAME: myapplication
 
 jobs:
-  deploy:
+  release:
     runs-on: ubuntu-latest
 
     steps:
@@ -21,22 +21,22 @@ jobs:
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
 
+    - name: Get Release Version
+      id: version
+      run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
+
     - name: Build the Docker image
       run: make build-image
-
-    - name: Extract tag name
-      id: tag
-      run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
 
     - name: Login to Docker
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
-    - name: Tag the Docker Image
+    - name: Tag the Docker Image with Release Version
       env:
-        VERSION: ${{ steps.tag.outputs.VERSION }}
+        VERSION: ${{ steps.version.outputs.VERSION }}
       run: make tag
 
     - name: Push Image to Docker
       env:
-        VERSION: ${{ steps.tag.outputs.VERSION }}
+        VERSION: ${{ steps.version.outputs.VERSION }}
       run: make push

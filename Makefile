@@ -13,7 +13,7 @@ APP_NAME = myapplication
 APP_REPO = docker.pkg.github.com/bradtho/${APP_NAME}
 
 CHECKSUM = $(shell git rev-parse --short HEAD)
-VERSION = $(shell git rev-parse --abbrev-ref HEAD)
+VERSION ?= dev 
 
 ## TARGETS
 ## For Local Use and Testing: Builds the Go Application in the current directory
