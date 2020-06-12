@@ -135,7 +135,6 @@ A list of items for consideration post Minimal Viable Product addressing risks a
 - Switching OSes/Architectures may cause Docker runtime issues i.e. - standard_init_linux.go:211: exec user process caused "no such file or directory" error occurs when running the image where GOOS=linux is not set within the Dockerfile.
 - Unit testing returns for Negative.
 - Utilising test coverage to determine whether the critical logic of the application is being validated is more important than hitting a certain percentage of coverage. The test suite outputs coverage files to assist with this analysis.
-- During development GoSec found [/github/workspace/main.go:89] - G104 (CWE-703): Errors unhandled. (Confidence: HIGH, Severity: LOW) this has since been remediated but validates that GoSec is working.
 - Branching rules and templates need to be expanded upon to restrict pull requests into `master`.
 - Implementation of automated version bumping should be considered to take away any manual handling of version control. i.e. detect on a merge to master with key words within the commit message. This however does still required that the developer remembers to insert said keywords and may be more accustoed to using the `git tag` method in use currently.
 - The application has no catch or recovery mechanism. e.g. if the JSON encoder failed then the user would still receive a HTTP 200 status but receive unexpected output.
