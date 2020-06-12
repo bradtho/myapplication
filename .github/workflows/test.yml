@@ -24,7 +24,12 @@ jobs:
         VERSION: ${{ steps.version.outputs.VERSION }}
       run: |
         echo $VERSION
-        make build-image VERSION=$VERSION
+        make build-image
+
+    - name: Tag the Docker Image with Release Version
+      env:
+        VERSION: ${{ steps.version.outputs.VERSION }}
+      run: make tag
 
   test-security:
     runs-on: ubuntu-latest

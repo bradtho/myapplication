@@ -22,7 +22,7 @@ build-package:
 
 ## For Local and Pipeline Use and Testing: Packages the Go Application into a Docker Image
 build-image:
-	docker build --build-arg ${CHECKSUM} --build-arg ${VERSION} -t ${APP_NAME} .
+	docker build --build-arg=${CHECKSUM} --build-arg=${VERSION} -t ${APP_NAME} .
 
 ## Cleans the local directory
 clean:
