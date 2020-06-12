@@ -22,7 +22,9 @@ jobs:
     - name: Build the Docker image
       env:
         VERSION: ${{ steps.version.outputs.VERSION }}
-      run: make build-image
+      run: |
+        echo $VERSION
+        make build-image
 
   test-security:
     runs-on: ubuntu-latest
