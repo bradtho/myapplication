@@ -8,7 +8,7 @@ env:
   IMAGE_NAME: myapplication
 
 jobs:
-  publish:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
@@ -28,13 +28,13 @@ jobs:
       id: tag
       run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
 
+    - name: Login to Docker
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
+
     - name: Tag the Docker Image
       env:
         VERSION: ${{ steps.tag.outputs.VERSION }}
       run: make tag
-
-    - name: Login to Docker
-      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin
 
     - name: Push Image to Docker
       env:

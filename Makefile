@@ -3,9 +3,9 @@ SHELL := /bin/sh
 
 ## VARIABLES
 APP_NAME = myapplication
-APP_REPO = docker.pkg.github.com/bradtho/$(APP_NAME)/$(APP_NAME)
+APP_REPO = docker.pkg.github.com/bradtho/${APP_NAME}
 
-CHECKSUM = $(git rev-parse --short HEAD)
+CHECKSUM = $(shell git rev-parse --short HEAD)
 VERSION ?= dev
 
 ## TARGETS
@@ -22,10 +22,10 @@ init:
 	go mod download
 
 push: 
-	docker push ${APP_NAME}:${VERSION}
+	docker push ${APP_REPO}/IMAGE_NAME:VERSION
 
 tag:
-	docker tag ${APP_NAME} ${APP_REPO}:${VERSION}
+	docker tag ${APP_NAME} ${APP_REPO}/${APP_NAME}:${VERSION}
 
 test:
 	go vet ./...

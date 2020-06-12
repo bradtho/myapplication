@@ -12,3 +12,4 @@ A basic HTTP API
 - unit testing returns for both positive and negative
 - utilising test coverage to determine whether the critical logic of the application is being validated
 - not possible to test the graceful shutdown SIGINT and SIGTERM and be initiated via go tests, could test using a *docker stop*
+- GoSec found [/github/workspace/main.go:89] - G104 (CWE-703): Errors unhandled. (Confidence: HIGH, Severity: LOW)
