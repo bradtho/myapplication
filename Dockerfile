@@ -12,7 +12,7 @@ RUN apk update --no-cache && \
 
 COPY . .
 
-RUN CGO_ENABLED=0 GOOS=linux make build-package
+RUN CGO_ENABLED=0 GOOS=linux make build-package VERSION=$VERSION
 
 # RUNTIME STAGE
 FROM gcr.io/distroless/static
