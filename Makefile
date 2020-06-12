@@ -22,7 +22,7 @@ init:
 	go mod download
 
 push: 
-	docker push ${APP_REPO}/${APP_REPO}:${VERSION}
+	docker push ${APP_REPO}/${APP_NAME}:${VERSION}
 
 tag:
 	docker tag ${APP_NAME} ${APP_REPO}/${APP_NAME}:${VERSION}
