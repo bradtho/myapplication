@@ -6,7 +6,7 @@ APP_NAME = myapplication
 APP_REPO = docker.pkg.github.com/bradtho/${APP_NAME}
 
 CHECKSUM = $(shell git rev-parse --short HEAD)
-VERSION ?= dev
+VERSION ?= $(shell git rev-parse --abbrev-ref HEAD)
 
 ## TARGETS
 build-package:
