@@ -12,8 +12,6 @@ RUN apk update --no-cache && \
 
 COPY . .
 
-RUN make init
-
 RUN CGO_ENABLED=0 GOOS=linux make build-package
 
 # RUNTIME STAGE
