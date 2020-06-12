@@ -2,8 +2,6 @@ name: Build and Test
 on: [push, pull_request]
 
 jobs:
-  build:
-  
   test:
     runs-on: ubuntu-latest
     env:
@@ -35,4 +33,4 @@ jobs:
         args: ./...
 
     - name: Test
-    run: make test
+      run: make test
