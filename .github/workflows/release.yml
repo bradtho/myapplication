@@ -30,7 +30,7 @@ jobs:
         VERSION: ${{ steps.version.outputs.VERSION }}
       run: |
         echo $VERSION
-        make build-image
+        make build-image VERSION=$VERSION
 
     - name: Login to Docker
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login docker.pkg.github.com -u ${{ github.actor }} --password-stdin

@@ -24,7 +24,7 @@ jobs:
         VERSION: ${{ steps.version.outputs.VERSION }}
       run: |
         echo $VERSION
-        make build-image
+        make build-image VERSION=$VERSION
 
   test-security:
     runs-on: ubuntu-latest
