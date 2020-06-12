@@ -26,6 +26,8 @@ jobs:
       run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
 
     - name: Build the Docker image
+      env:
+        VERSION: ${{ steps.version.outputs.VERSION }}
       run: make build-image
 
     - name: Login to Docker
