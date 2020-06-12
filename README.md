@@ -28,7 +28,7 @@ Where builds are untagged branch name is used as the version.
 
 Where builds are tagged, the CI Pipeline will build a Docker image with the tag and push this versioned release to the GitHub image and code respositories.
 
-Version is dynamically hard set at build time so that a misconfigured deployment won't show a different version to what is actually released. This ensures the version running definitely points to the commit that it was compiled from.
+Version is dynamically set during build time so that a misconfigured deployment won't show a different version to what was actually released. This ensures the version running points to the commit that it was compiled from.
 
 The latest Docker image refers to the latest tagged release and not current master.
 
