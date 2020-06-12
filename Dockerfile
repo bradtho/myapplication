@@ -12,6 +12,12 @@ RUN apk update --no-cache && \
 
 COPY . .
 
+ARG checksum
+ARG version
+
+ENV GIT_CHECKSUM=${checksum}
+ENV GIT_VERSION=${version}
+
 RUN CGO_ENABLED=0 GOOS=linux make build-package
 
 # RUNTIME STAGE
