@@ -26,7 +26,7 @@ jobs:
         echo $VERSION
         make build-image
 
-    - name: Tag the Docker Image with Release Version
+    - name: Tag the Docker Image with Test Version
       env:
         VERSION: ${{ steps.version.outputs.VERSION }}
       run: make tag
