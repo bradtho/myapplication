@@ -47,7 +47,8 @@ func main() {
 	}()
 
 	//Graceful Shutdown
-	GracefulShutdown(srv)
+	ret := GracefulShutdown(srv)
+	os.Exit(ret)
 
 }
 
@@ -76,7 +77,7 @@ func VersionHandler(w http.ResponseWriter, r *http.Request, _ httprouter.Params)
 }
 
 // GracefulShutdown shuts down the http server gracefully.
-func GracefulShutdown(srv *http.Server) {
+func GracefulShutdown(srv *http.Server) int {
 	interruptChan := make(chan os.Signal, 1)
 	signal.Notify(interruptChan, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
@@ -93,5 +94,6 @@ func GracefulShutdown(srv *http.Server) {
 	}
 
 	log.Println("Shutting down HTTP server")
-	os.Exit(0)
+
+	return 0
 }

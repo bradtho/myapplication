@@ -20,9 +20,17 @@ the following schema
 
 ## Branching and Versioning Strategy
 
-Versioning is managed by git tags. On an untagged build, the version dev is used. Tagged builds push a Docker image and versioned release to the GitHub image and source respositories.
+Branching is intended to be done from `master` into `feat` or `fix` branches. Releases are intended to be done from `master`.
 
-The version is dynamically hard set at build time so that a misconfigured deployment won't show a different version to what is actually released. This ensures the version running definitely points to the commit that it was compiled from. The latest Docker image refers to the latest tagged release and not current master.
+Versioning of releases is managed using git tags.
+
+Where builds are untagged branch name is used as the version.
+
+Tagged builds push a Docker image and versioned release to the GitHub image and source respositories.
+
+Version is dynamically hard set at build time so that a misconfigured deployment won't show a different version to what is actually released. This ensures the version running definitely points to the commit that it was compiled from.
+
+The latest Docker image refers to the latest tagged release and not current master.
 
 ## CI Pipeline
 
@@ -46,15 +54,23 @@ The pipeline has been split into two distinct phases **Build and Test** and **Re
 - Uses git tags to tag the subsequent Docker image.
 - Pushes the Docker image to the GitHub Docker registry.
 
-**Release** truiggers on new tags along with building the Docker image before deploying to the GitHub Docker registry.
+**Release** triggers on detection of new SEMVER tags.
 
-## Code Coverage
-Type definitions generally don't show up in Go code coverage. It's generally impractical to validate coverage against things like the server being able to start, so the only meaningful coverage is the Version() method for rendering a response to API requests.
+## Unit Testing Code Coverage
 
-## Security
-Dependencies are pinned to exact git commits, either from an approved HEAD, or specific upstream version tag. Only known and explicit dependency versions are installed. The base Docker image used is Distroless, an image maintained by Google with only the bare essentials present and mostly updated to handle patching relevant CVEs. While scanning the Docker image with a tool such as CoreOS Clair is a good idea, it requires a reasonable amount of infrastructure and isn't available as a SaaS service.
+Given the complexity of validating coverage against server startup or shutdown, coverage
+results will appear lower than typically desired as the VersionHandler() method is all we can easily test against.
 
-Dependencies
+## Security Considerations
+
+A number of steps were undertaken to enhance the security of the application:
+
+- Utilising Google's Distroless Docker Image, this image contains a "bare bones" container on which only the essential requirements are built into the image.
+- Given that image scanning isn't a simple process without considerable infrastructure the use of Distroless reduces the images Security Footprint.
+- Dependencies are pinned to exact git commits, either from an approved HEAD, or specific upstream version tag.
+
+## Dependencies for Local Development
+
 While the code itself has no user-installed dependencies, the build environment requires the following:
 
 Docker
@@ -62,7 +78,8 @@ Git
 GNU Make
 A development environment additionally needs Go 1.13 or later.
 
-Developing
+## Local Development
+
 To build, make build will suffice. There is also make test to run just the tests.
 
 To release a new version, git tags are used, for example:
@@ -75,19 +92,33 @@ As far as application error handling goes, there is no proper catch or recovery.
 
 The built Docker image is also running as privileged user, however if it isn't, then it wouldn't be able to receive signals on PID 0. For this reason, the Distroless base image is used rather than Scratch.
 
-Deployments
-The app is simply a Docker image and can be run in any Docker-capable environment. To start a container, run the following:
+## Deployments
 
-docker run -p 8000:8000 docker.pkg.github.com/hatt/anz-test-2/anz-test-2:latest
+The is run as a Docker image and can be from any system meeting the requirements to run docker.
 
-## Additional Considerations
+[To authenticate as a user to the Github Docker Repository](https://help.github.com/en/packages/using-github-packages-with-your-projects-ecosystem/configuring-docker-for-use-with-github-packages#authenticating-with-a-personal-access-token)
 
-- go test coverage indicates only 50% of statements are being covered by the test.
-- consider vendoring dependencies and hosting specific versions in a non-public code repo.
+```bash
+cat ~/TOKEN.txt | docker login https://docker.pkg.github.com -u USERNAME --password-stdin
+```
+
+To start the container, run the following:
+
+```bash
+docker run -p 8000:8000 docker.pkg.github.com/bradtho/myapplication:latest
+```
+
+## Additional Considerations and Notes
+
+A list of items for consideration post Minimal Viable Product:
+
+- Test coverage indicates <50% of statements are being covered by the Go unit test. Additional unit tests may be introduced to cover items such as startup and shutdown operations i.e. - it is not possible to test the graceful shutdown SIGINT and SIGTERM and be initiated via go tests, could test using a *docker stop*
+- Consider vendoring dependencies and hosting specific versions in a non-public code repo.
 - golang:alpine is still a 127MB image so should ideally be cached locally
-- image size is 7.47MB
-- switching OSes/Architectures may cause Docker runtime issues
-- unit testing returns for both positive and negative
-- utilising test coverage to determine whether the critical logic of the application is being validated
-- not possible to test the graceful shutdown SIGINT and SIGTERM and be initiated via go tests, could test using a *docker stop*
-- GoSec found [/github/workspace/main.go:89] - G104 (CWE-703): Errors unhandled. (Confidence: HIGH, Severity: LOW)
+- gcr.io/distroless/static is a 1.82MB image so it is about as small as it will get.
+- Final image size is 7.45MB this may be difficult to reduce further.
+- Switching OSes/Architectures may cause Docker runtime issues i.e. - standard_init_linux.go:211: exec user process caused "no such file or directory" error occurs when running the image where GOOS=linux is not set within the Dockerfile.
+- Unit testing returns for Negative.
+- Utilising test coverage to determine whether the critical logic of the application is being validated is more important than hitting a certain percentage of coverage. The test suite outputs coverage files to assist with this analysis.
+- During development GoSec found [/github/workspace/main.go:89] - G104 (CWE-703): Errors unhandled. (Confidence: HIGH, Severity: LOW) this has since been remediated but validates that GoSec is working.
+- Branching rules and templates need to be expanded upon to restrict pull requests into `master`.
