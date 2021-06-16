@@ -30,6 +30,4 @@ jobs:
       run: docker build . -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
 
     - name: Push Image to Docker
-      env:
-        VERSION: ${{ steps.version.outputs.VERSION }}
       run: docker push ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
