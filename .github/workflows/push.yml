@@ -22,13 +22,6 @@ jobs:
     - name: Build the Docker image
       run: docker build . -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
 
-    - name: Scan image for vulnerabilities
-      uses: Azure/container-scan@v0.1
-      id: container-scan
-      continue-on-error: true
-      with:
-        image-name: ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
-
     - name: Login to Azure Container Registry
       uses: azure/docker-login@v1
       with:
@@ -38,6 +31,13 @@ jobs:
 
     - name: Push Image to ACR
       run: docker push ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
+
+    - name: Scan image for vulnerabilities
+      uses: Azure/container-scan@v0.1
+      id: container-scan
+      continue-on-error: true
+      with:
+        image-name: ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
 
     - name: Post scan results to ASC
       uses: Azure/publish-security-assessments@v0
