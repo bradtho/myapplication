@@ -29,7 +29,7 @@ jobs:
         image-name: ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
 
     - name: Post scan results to ASC
-      uses: Azure/publish-security-assessments@v1
+      uses: Azure/publish-security-assessments@v0
       with: 
         scan-results-path: ${{ steps.container-scan.outputs.scan-report-path }}
         connection-string: ${{ secrets.AZ_APPINSIGHTS_CONNECTION_STRING }}
