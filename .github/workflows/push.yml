@@ -17,7 +17,23 @@ jobs:
         go-version: 1.13
 
     - name: Check out code into the Go module directory
-      uses: actions/checkout@main
+      uses: actions/checkout@master
+
+    - name: Build the Docker image
+      run: docker build . -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
+
+    - name: Scan image for vulnerabilities
+      uses: Azure/container-scan@v0 
+      id: container-scan
+      with:
+        image-name: ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
+
+    - name: Post scan results to ASC
+      uses: Azure/publish-security-assessments@v1
+      with: 
+        scan-results-path: ${{ steps.container-scan.outputs.scan-report-path }}
+        connection-string: ${{ secrets.AZ_APPINSIGHTS_CONNECTION_STRING }}
+        subscription-token: ${{ secrets.AZ_SUBSCRIPTION_TOKEN }}
 
     - name: Login to Azure Container Registry
       uses: azure/docker-login@v1
@@ -26,22 +42,5 @@ jobs:
         username: ${{ secrets.AZ_SP_CLIENT_ID }} 
         password: ${{ secrets.AZ_SP_CLIENT_SECRET }}
 
-    - name: Build the Docker image
-      run: docker build . -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
-
-    - name: Scan image for vulnerabilities
-      uses: Azure/container-scan@v0 
-      id: container-scan
-      continue-on-error: true
-      with:
-        image-name: ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
-
-    - name: Push Image to Docker
+    - name: Push Image to ACR
       run: docker push ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
-
-    - name: Post logs to appinsights
-      uses: Azure/publish-security-assessments@v0
-      with: 
-        scan-results-path: ${{ steps.container-scan.outputs.scan-report-path }}
-        connection-string: ${{ secrets.AZ_APPINSIGHTS_CONNECTION_STRING }}
-        subscription-token: ${{ secrets.AZ_SUBSCRIPTION_TOKEN }}

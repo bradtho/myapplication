@@ -21,9 +21,9 @@ ENV GIT_VERSION=${version}
 RUN CGO_ENABLED=0 GOOS=linux make build-package
 
 # RUNTIME STAGE
-FROM gcr.io/distroless/static
+#FROM gcr.io/distroless/static
 
-COPY --from=build /app/myapplication /app/myapplication
+#COPY --from=build /app/myapplication /app/myapplication
 
 EXPOSE 8080
 
