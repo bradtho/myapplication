@@ -42,7 +42,7 @@ jobs:
         password: ${{ secrets.AZ_SP_CLIENT_SECRET }}
 
     - name: Check
-      run: run cat ${{ steps.container-scan.outputs.scan-report-path }}
+      run: cat ${{ steps.container-scan.outputs.scan-report-path }}
 
     - name: Post scan results to ASC
       uses: Azure/publish-security-assessments@v0
