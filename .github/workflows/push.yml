@@ -23,8 +23,9 @@ jobs:
       run: docker build . -t ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
 
     - name: Scan image for vulnerabilities
-      uses: Azure/container-scan@v0 
+      uses: Azure/container-scan@v0.1
       id: container-scan
+      continue-on-error: true
       with:
         image-name: ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
 
