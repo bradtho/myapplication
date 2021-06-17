@@ -38,6 +38,8 @@ jobs:
       continue-on-error: true
       with:
         image-name: ${{ env.REGISTRY_NAME }}.azurecr.io/${{ env.APP_NAME }}:${{ github.sha }}
+        username: ${{ secrets.AZ_SP_CLIENT_ID }} 
+        password: ${{ secrets.AZ_SP_CLIENT_SECRET }}
 
     - name: Post scan results to ASC
       uses: Azure/publish-security-assessments@v0
